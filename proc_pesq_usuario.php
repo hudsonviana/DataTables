@@ -23,6 +23,15 @@ $colunas = [
 ];
 
 //Obter registros de número total sem qualquer pesquisa
-$sql = "SELECT * FROM usuarios";
-$resultado = mysqli_query($conexao, $sql);
-$qtdeLinhas = mysqli_num_rows($resultado);
+$sqlRegistro = "SELECT * FROM usuarios";
+$resultRegistro = mysqli_query($conexao, $sqlRegistro);
+$qtdeLinhasRegistro = mysqli_num_rows($resultRegistro);
+
+//Ober tados a serem apresentados
+$sqlTabela = "SELECT nome, profissao, nascimento, sexo, peso, altura, nacionalidade FROM usuarios WHERE 1=1";
+$resultTabela = mysqli_query($conexao, $sqlTabela);
+$qtdeLinhasTabela = mysqli_num_rows($resultTabela);
+
+//Ordenar resultado
+$sqlRegistro.= "ORDER BY " . $colunas[$requisicao['order'][0]['column']] . " " . $requisicao['order'][0]['dir'] . " LIMIT " . $requisicao['start'] . " ," . $requisicao['lenhth'] . " ";
+$resultTabela = mysqli_query($conexao, $sqlTabela);
