@@ -33,5 +33,21 @@ $resultTabela = mysqli_query($conexao, $sqlTabela);
 $qtdeLinhasTabela = mysqli_num_rows($resultTabela);
 
 //Ordenar resultado
-$sqlRegistro.= "ORDER BY " . $colunas[$requisicao['order'][0]['column']] . " " . $requisicao['order'][0]['dir'] . " LIMIT " . $requisicao['start'] . " ," . $requisicao['lenhth'] . " ";
+$sqlRegistro.= "ORDER BY " . $colunas[$requisicao['order'][0]['column']] . " " . $requisicao['order'][0]['dir'] . " LIMIT " . $requisicao['start'] . " ," . $requisicao['length'] . " ";
 $resultTabela = mysqli_query($conexao, $sqlTabela);
+
+//Ler e criar o array de dados
+$dados = [];
+
+while ($linhaUsuario = mysqli_fetch_array($resultTabela)) {
+    $dado = [];
+    $dado[] = $linhaUsuario['nome'];
+    $dado[] = $linhaUsuario['profissao'];
+    $dado[] = $linhaUsuario['nascimento'];
+    $dado[] = $linhaUsuario['sexo'];
+    $dado[] = $linhaUsuario['peso'];
+    $dado[] = $linhaUsuario['altura'];
+    $dado[] = $linhaUsuario['nacionalidade'];
+
+    $dados[] = $dado;
+}
