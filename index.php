@@ -6,6 +6,18 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
     <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
     <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#listar_usuario').DataTable({
+                "processing": true,
+                "serverSide": true,
+                "ajax": {
+                    "url": "proc_pesq_usuario.php",
+                    "type": "POST"
+                }
+            });
+        });
+    </script>
     <title>Listagem</title>
 </head>
 <body>
