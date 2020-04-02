@@ -9,45 +9,56 @@ $baseDados = 'cadastrodatatables';
 $conexao = mysqli_connect($servidor, $usuario, $senha, $baseDados);
 
 //Receber a requisição da pesquisa
-$requisicao = $_REQUEST;
+$requestData = $_REQUEST;
 
 //Índice da coluna na tabela
-$colunas = [
-    ['0' => 'nome'],
-    ['1' => 'profissao'],
-    ['2' => 'nascimento'],
-    ['3' => 'sexo'],
-    ['4' => 'peso'],
-    ['5' => 'altura'],
-    ['6' => 'nacionalidade']
-];
+$columns = array(
+    0 => 'nome',
+    1 => 'profissao',
+    2 => 'nascimento',
+    3 => 'sexo',
+    4 => 'peso',
+    5 => 'altura',
+    6 => 'nacionalidade'
+);
 
 //Obter registros de número total sem qualquer pesquisa
-$sqlRegistro = "SELECT * FROM usuarios";
-$resultRegistro = mysqli_query($conexao, $sqlRegistro);
-$qtdeLinhasRegistro = mysqli_num_rows($resultRegistro);
+$result_user = "SELECT nome, profissao, nascimento, sexo, peso, altura, nacionalidade FROM usuarios";
+$resultado_user = mysqli_query($conexao, $result_user);
+$qtde_linhas = mysqli_num_rows($resultado_user);
 
 //Ober tados a serem apresentados
-$sqlTabela = "SELECT nome, profissao, nascimento, sexo, peso, altura, nacionalidade FROM usuarios WHERE 1=1";
-$resultTabela = mysqli_query($conexao, $sqlTabela);
-$qtdeLinhasTabela = mysqli_num_rows($resultTabela);
+$result_usuarios = "SELECT nome, profissao, nascimento, sexo, peso, altura, nacionalidade FROM usuarios WHERE 1=1";
+$resultado_usuarios = mysqli_query($conexao, $result_usuarios);
+$totalFiltered = mysqli_num_rows($resultado_usuarios);
 
 //Ordenar resultado
-$sqlRegistro.= "ORDER BY " . $colunas[$requisicao['order'][0]['column']] . " " . $requisicao['order'][0]['dir'] . " LIMIT " . $requisicao['start'] . " ," . $requisicao['length'] . " ";
-$resultTabela = mysqli_query($conexao, $sqlTabela);
+$result_usuarios.=" ORDER BY ". $columns[$requestData['order'][0]['column']]."   ".$requestData['order'][0]['dir']."  LIMIT ".$requestData['start']." ,".$requestData['length']."   ";
+$resultado_usuarios = mysqli_query($conexao, $result_usuarios);
 
 //Ler e criar o array de dados
-$dados = [];
+$dados = array();
 
-while ($linhaUsuario = mysqli_fetch_array($resultTabela)) {
-    $dado = [];
-    $dado[] = $linhaUsuario['nome'];
-    $dado[] = $linhaUsuario['profissao'];
-    $dado[] = $linhaUsuario['nascimento'];
-    $dado[] = $linhaUsuario['sexo'];
-    $dado[] = $linhaUsuario['peso'];
-    $dado[] = $linhaUsuario['altura'];
-    $dado[] = $linhaUsuario['nacionalidade'];
+while ($row_usuarios = mysqli_fetch_array($resultado_usuarios)) {
+    $dado = array();
+    $dado[] = utf8_encode($row_usuarios['nome']);
+    $dado[] = utf8_encode($row_usuarios['profissao']);
+    $dado[] = $row_usuarios['nascimento'];
+    $dado[] = $row_usuarios['sexo'];
+    $dado[] = $row_usuarios['peso'];
+    $dado[] = $row_usuarios['altura'];
+    $dado[] = utf8_encode($row_usuarios['nacionalidade']);
 
     $dados[] = $dado;
 }
+
+//Cria o array de informações a serem retornadas para o Javascript
+$json_data = array(
+    "draw" => intval($requestData['draw']), //para cada requisição é enviado um número como parâmetro
+    "recordsTotal" => intval($qtde_linhas), //quantidade de registros que há no banco de dados
+    "recordsFiltered" => intval($$totalFiltered), //total de registros quando houver pesquisa
+    "data" => $dados //array de dados completo dos ddos retornados da tabela
+);
+
+//echo json_encode($json_data); //enviar dados no formato json
+print_r($json_data);

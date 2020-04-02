@@ -27,7 +27,6 @@
     
         <thead>
             <tr>
-                <th>ID</th>
                 <th>Nome</th>
                 <th>Profissão</th>
                 <th>Nascimento</th>
